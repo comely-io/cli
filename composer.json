@@ -14,8 +14,8 @@
   ],
   "require": {
     "php": "^7.1",
-    "comely-io/utils": "^1.0.10",
-    "comely-io/filesystem": "^1.0.10"
+    "comely-io/utils": "^1.1.21",
+    "comely-io/filesystem": "^1.0.12"
   },
   "autoload": {
     "psr-4": {

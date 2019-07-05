@@ -169,10 +169,22 @@ class CLI
             $this->print("{red}Execution finish with an error!{/}");
         }
 
+        $this->terminate();
+    }
+
+    /**
+     * @param bool $exit
+     */
+    final public function terminate(bool $exit = false): void
+    {
         // Finish execution
         $this->print("");
         $this->print(sprintf("Execution time: {grey}%s{/}", number_format(microtime(true) - $this->execStartStamp, 4)));
         $this->printMemoryConsumption();
+
+        if ($exit) {
+            exit();
+        }
     }
 
     /**

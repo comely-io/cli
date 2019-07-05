@@ -21,7 +21,7 @@ namespace Comely\CLI;
 abstract class Abstract_CLI_Script
 {
     /** @var CLI */
-    private $cli;
+    protected $cli;
 
     /**
      * Abstract_CLI_Script constructor.
@@ -79,14 +79,6 @@ abstract class Abstract_CLI_Script
     final protected function repeat(string $char = ".", int $count = 10, int $interval = 100, bool $eol = false): void
     {
         $this->cli->repeat($char, $count, $interval, $eol);
-    }
-
-    /**
-     * @return CLI
-     */
-    final protected function cli(): CLI
-    {
-        return $this->cli;
     }
 
     /**

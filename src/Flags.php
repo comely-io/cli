@@ -92,7 +92,7 @@ class Flags implements \Iterator, \Countable
      */
     public function has(string $name): bool
     {
-        return isset($this->flags[strtolower($name)]);
+        return array_key_exists(strtolower($name), $this->flags);
     }
 
     /**

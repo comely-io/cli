@@ -27,7 +27,7 @@ abstract class Abstract_CLI_Script
      * Abstract_CLI_Script constructor.
      * @param CLI $cli
      */
-    final public function __construct(CLI $cli)
+    public function __construct(CLI $cli)
     {
         $this->cli = $cli;
     }

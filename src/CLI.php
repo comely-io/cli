@@ -153,6 +153,14 @@ class CLI
         // After script exec event
         $this->events->afterExec()->trigger([$this, $execSuccess]);
 
+        // Execution
+        $this->print("");
+        if ($execSuccess) {
+            $this->print("{green}Execution finished!{/}");
+        } else {
+            $this->print("{red}Execution finish with an error!{/}");
+        }
+
         // Finish execution
         $this->print("");
         $this->print(sprintf("Execution time: {grey}%s{/}", number_format(microtime(true) - $this->execStartStamp, 4)));

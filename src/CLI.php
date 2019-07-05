@@ -24,6 +24,11 @@ use Comely\Utils\OOP\OOP;
  */
 class CLI
 {
+    /** string Version (Major.Minor.Release-Suffix) */
+    public const VERSION = "1.0.10";
+    /** int Version (Major * 10000 + Minor * 100 + Release) */
+    public const VERSION_ID = 10010;
+
     /** @var Directory */
     private $dir;
     /** @var Events */

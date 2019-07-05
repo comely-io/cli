@@ -169,13 +169,13 @@ class CLI
             $this->print("{red}Execution finish with an error!{/}");
         }
 
-        $this->terminate();
+        $this->finish();
     }
 
     /**
      * @param bool $exit
      */
-    final public function terminate(bool $exit = false): void
+    final public function finish(bool $exit = true): void
     {
         // Finish execution
         $this->print("");

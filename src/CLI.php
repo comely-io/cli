@@ -166,7 +166,7 @@ class CLI
         if (isset($execSuccess) && $execSuccess) {
             $this->print("{green}Execution finished!{/}");
         } else {
-            $this->print("{red}Execution finish with an error!{/}");
+            $this->print("{red}Execution finished with an exception!{/}");
         }
 
         $this->finish();

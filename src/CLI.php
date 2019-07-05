@@ -48,7 +48,7 @@ class CLI
      * @param array $args
      * @throws BadArgumentException
      */
-    final public function __construct(Directory $dir, array $args)
+    public function __construct(Directory $dir, array $args)
     {
         $this->dir = $dir;
         $this->events = new Events($this);
@@ -101,66 +101,69 @@ class CLI
      */
     final public function exec(): void
     {
-        // Before execution starts
-        $this->events->beforeExec()->trigger([$this]);
+        try {
+            // Before execution starts
+            $this->events->beforeExec()->trigger([$this]);
 
-        // Bin namespace autoloader
-        $binDirectoryPath = $this->dir->path();
-        spl_autoload_register(function (string $class) use ($binDirectoryPath) {
-            if (preg_match('/^bin\\\\\w+$/', $class)) {
-                $className = OOP::baseClassName($class);
-                $classFilename = OOP::snake_case($className);
-                $classFilepath = $binDirectoryPath . DIRECTORY_SEPARATOR . $classFilename . ".php";
-                if (@is_file($classFilepath)) {
-                    /** @noinspection PhpIncludeInspection */
-                    @include_once($classFilepath);
+            // Bin namespace autoloader
+            $binDirectoryPath = $this->dir->path();
+            spl_autoload_register(function (string $class) use ($binDirectoryPath) {
+                if (preg_match('/^bin\\\\\w+$/', $class)) {
+                    $className = OOP::baseClassName($class);
+                    $classFilename = OOP::snake_case($className);
+                    $classFilepath = $binDirectoryPath . DIRECTORY_SEPARATOR . $classFilename . ".php";
+                    if (@is_file($classFilepath)) {
+                        /** @noinspection PhpIncludeInspection */
+                        @include_once($classFilepath);
+                    }
                 }
-            }
-        });
+            });
 
-        // Load script
-        try {
-            $scriptName = $this->args()->get(0) ?? "console";
-            if (!is_string($scriptName) || !preg_match('/\w+/', $scriptName)) {
-                throw new \InvalidArgumentException('Invalid CLI script name');
+            // Load script
+            try {
+                $scriptName = $this->args()->get(0) ?? "console";
+                if (!is_string($scriptName) || !preg_match('/\w+/', $scriptName)) {
+                    throw new \InvalidArgumentException('Invalid CLI script name');
+                }
+
+                $scriptClassname = "bin\\" . OOP::snake_case($scriptName);
+                if (!class_exists($scriptClassname)) {
+                    throw new \RuntimeException(sprintf('Script class "%s" does not exist', $scriptClassname));
+                } elseif (!is_a($scriptClassname, 'Comely\CLI\Abstract_CLI_Script', true)) {
+                    throw new \RuntimeException(
+                        sprintf('Script class "%s" must extend "Abstract_CLI_Script" class', $scriptClassname)
+                    );
+                }
+
+                /** @var Abstract_CLI_Script $scriptObject */
+                $scriptObject = new $scriptClassname($this);
+            } catch (\RuntimeException $e) {
+                $this->events->scriptNotFound()->trigger([$this, $scriptClassname ?? ""]);
+                throw $e;
             }
 
-            $scriptClassname = "bin\\" . OOP::snake_case($scriptName);
-            if (!class_exists($scriptClassname)) {
-                throw new \RuntimeException(sprintf('Script class "%s" does not exist', $scriptClassname));
-            } elseif (!is_a($scriptClassname, 'Comely\CLI\Abstract_CLI_Script', true)) {
-                throw new \RuntimeException(
-                    sprintf('Script class "%s" must extend "Abstract_CLI_Script" class', $scriptClassname)
-                );
+            // Script is loaded trigger
+            $this->events->scriptLoaded()->trigger([$this, $scriptObject]);
+
+            // Execute script
+            $execSuccess = false;
+            try {
+                $scriptObject->exec();
+                $execSuccess = true;
+            } catch (\Throwable $t) {
+                $this->events->scriptExecException()->trigger([$this, $t]);
+                throw $t;
             }
 
-            /** @var Abstract_CLI_Script $scriptObject */
-            $scriptObject = new $scriptClassname($this);
+            // After script exec event
+            $this->events->afterExec()->trigger([$this, $execSuccess]);
         } catch (\Throwable $t) {
-            $this->events->scriptNotFound()->trigger([$this, $scriptClassname ?? ""]);
-            $this->exception2Str($t);
-            return;
-        }
-
-        // Script is loaded trigger
-        $this->events->scriptLoaded()->trigger([$this, $scriptObject]);
-
-        // Execute script
-        $execSuccess = false;
-        try {
-            $scriptObject->exec();
-            $execSuccess = true;
-        } catch (\Throwable $t) {
-            $this->events->scriptExecException()->trigger([$this, $t]);
             $this->exception2Str($t);
         }
-
-        // After script exec event
-        $this->events->afterExec()->trigger([$this, $execSuccess]);
 
         // Execution
         $this->print("");
-        if ($execSuccess) {
+        if (isset($execSuccess) && $execSuccess) {
             $this->print("{green}Execution finished!{/}");
         } else {
             $this->print("{red}Execution finish with an error!{/}");

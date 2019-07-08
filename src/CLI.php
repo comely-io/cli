@@ -327,8 +327,8 @@ class CLI
         $this->print("");
         $this->print($tabs . sprintf("{yellow}File:{/} %s", $t->getFile()));
         $this->print($tabs . sprintf("{yellow}Line:{/} {cyan}%d{/}", $t->getLine()));
-        $this->print("");
-        $this->print($tabs . "Debug Backtrace:");
+        $this->print($tabs . "{yellow}Debug Backtrace:");
+        $this->print($tabs . "\t┬");
 
         foreach ($t->getTrace() as $trace) {
             $function = $trace["function"] ?? null;
@@ -348,7 +348,7 @@ class CLI
                     $traceString = sprintf('Method <u>%s()</u> in file', $method) . $traceString;
                 }
 
-                $this->print($tabs . "├─ " . $traceString);
+                $this->print($tabs . "\t├─ " . $traceString);
             }
         }
         unset($trace, $traceString, $function, $class, $type, $file, $line);

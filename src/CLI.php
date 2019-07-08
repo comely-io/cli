@@ -179,7 +179,7 @@ class CLI
     {
         // Finish execution
         $this->print("");
-        $this->print(sprintf("Execution time: {grey}%s{/}", number_format(microtime(true) - $this->execStartStamp, 4)));
+        $this->print(sprintf("Execution time: {grey}%s{/}s", number_format(microtime(true) - $this->execStartStamp, 4)));
         $this->printMemoryConsumption();
 
         if ($exit) {
@@ -343,7 +343,7 @@ class CLI
                     $method = $class . $type . $function;
                 }
 
-                $traceString = sprintf('“<u>%s</u>” on line # <u>%d</u>', $file, $line);
+                $traceString = sprintf('“{u}{cyan}%s{/}” on line # {u}{yellow}%d{/}', $file, $line);
                 if ($method) {
                     $traceString = sprintf('Method <u>%s()</u> in file', $method) . $traceString;
                 }

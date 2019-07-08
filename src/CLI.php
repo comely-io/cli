@@ -41,6 +41,8 @@ class CLI
     private $flags;
     /** @var float */
     private $execStartStamp;
+    /** @var null|string */
+    protected $execClassName;
 
     /**
      * CLI constructor.
@@ -101,11 +103,10 @@ class CLI
      */
     final public function exec(): void
     {
-        try {
-            $execSuccess = false;
-            // Before execution starts
-            $this->events->beforeExec()->trigger([$this]);
+        // Exec success signal
+        $execSuccess = false;
 
+        try {
             // Bin namespace autoloader
             $binDirectoryPath = $this->dir->path();
             spl_autoload_register(function (string $class) use ($binDirectoryPath) {
@@ -119,6 +120,9 @@ class CLI
                     }
                 }
             });
+
+            // Before execution starts
+            $this->events->beforeExec()->trigger([$this]);
 
             // Load script
             try {
@@ -136,6 +140,7 @@ class CLI
                     );
                 }
 
+                $this->execClassName = $scriptClassname;
                 /** @var Abstract_CLI_Script $scriptObject */
                 $scriptObject = new $scriptClassname($this);
             } catch (\RuntimeException $e) {
@@ -168,7 +173,6 @@ class CLI
 
         // After script exec event
         $this->events->afterExec()->trigger([$this, $execSuccess]);
-
         $this->finish();
     }
 

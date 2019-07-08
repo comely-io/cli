@@ -179,7 +179,7 @@ class CLI
     {
         // Finish execution
         $this->print("");
-        $this->print(sprintf("Execution time: {grey}%s{/}s", number_format(microtime(true) - $this->execStartStamp, 4)));
+        $this->print(sprintf("Execution time: {grey}%ss{/}", number_format(microtime(true) - $this->execStartStamp, 4)));
         $this->printMemoryConsumption();
 
         if ($exit) {

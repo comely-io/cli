@@ -158,9 +158,6 @@ class CLI
             $this->exception2Str($t);
         }
 
-        // After script exec event
-        $this->events->afterExec()->trigger([$this, $execSuccess]);
-
         // Execution
         $this->print("");
         if (isset($execSuccess) && $execSuccess) {
@@ -168,6 +165,9 @@ class CLI
         } else {
             $this->print("{red}Execution finished with an exception!{/}");
         }
+
+        // After script exec event
+        $this->events->afterExec()->trigger([$this, $execSuccess]);
 
         $this->finish();
     }

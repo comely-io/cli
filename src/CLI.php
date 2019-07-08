@@ -233,7 +233,7 @@ class CLI
      */
     final public function repeat(string $char = ".", int $count = 10, int $interval = 100, bool $eol = false): void
     {
-        if ($interval <= 0) {
+        if ($interval < 0) {
             throw new \InvalidArgumentException('Repeat method requires positive interval');
         }
 

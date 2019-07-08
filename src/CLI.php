@@ -322,9 +322,7 @@ class CLI
         $this->repeat(".", 10);
         $this->print("");
         $this->print($tabs . sprintf('{yellow}Caught:{/} {red}{b}%s{/}', get_class($t)));
-        $this->print("");
-        $this->print($tabs . "\t{cyan}" . $t->getMessage() . "{/}");
-        $this->print("");
+        $this->print($tabs . sprintf("{yellow}Message:{/} {cyan}%s{/}", $t->getMessage()));
         $this->print($tabs . sprintf("{yellow}File:{/} %s", $t->getFile()));
         $this->print($tabs . sprintf("{yellow}Line:{/} {cyan}%d{/}", $t->getLine()));
         $this->print($tabs . "{yellow}Debug Backtrace:");
@@ -345,10 +343,10 @@ class CLI
 
                 $traceString = sprintf('"{u}{cyan}%s{/}" on line # {u}{yellow}%d{/}', $file, $line);
                 if ($method) {
-                    $traceString = sprintf('Method {u}{magenta}%s(){/} in file', $method) . $traceString;
+                    $traceString = sprintf('Method {u}{magenta}%s(){/} in file ', $method) . $traceString;
                 }
 
-                $this->print($tabs . "\t├─ " . $traceString);
+                $this->print($tabs . "├─ " . $traceString);
             }
         }
         unset($trace, $traceString, $function, $class, $type, $file, $line);

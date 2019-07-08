@@ -319,7 +319,7 @@ class CLI
     {
         $tabs = str_repeat("\t", $tabIndex);
         $this->print("");
-        $this->repeat(".", 10);
+        $this->repeat(".", 10, 50, true);
         $this->print("");
         $this->print($tabs . sprintf('{yellow}Caught:{/} {red}{b}%s{/}', get_class($t)));
         $this->print($tabs . sprintf("{yellow}Message:{/} {cyan}%s{/}", $t->getMessage()));

@@ -102,6 +102,7 @@ class CLI
     final public function exec(): void
     {
         try {
+            $execSuccess = false;
             // Before execution starts
             $this->events->beforeExec()->trigger([$this]);
 
@@ -146,7 +147,6 @@ class CLI
             $this->events->scriptLoaded()->trigger([$this, $scriptObject]);
 
             // Execute script
-            $execSuccess = false;
             try {
                 $scriptObject->exec();
                 $execSuccess = true;
@@ -154,12 +154,12 @@ class CLI
                 $this->events->scriptExecException()->trigger([$this, $t]);
                 throw $t;
             }
-
-            // After script exec event
-            $this->events->afterExec()->trigger([$this, $execSuccess]);
         } catch (\Throwable $t) {
             $this->exception2Str($t);
         }
+
+        // After script exec event
+        $this->events->afterExec()->trigger([$this, $execSuccess]);
 
         // Execution
         $this->print("");

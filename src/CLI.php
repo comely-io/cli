@@ -343,9 +343,9 @@ class CLI
                     $method = $class . $type . $function;
                 }
 
-                $traceString = sprintf('“{u}{cyan}%s{/}” on line # {u}{yellow}%d{/}', $file, $line);
+                $traceString = sprintf('"{u}{cyan}%s{/}" on line # {u}{yellow}%d{/}', $file, $line);
                 if ($method) {
-                    $traceString = sprintf('Method <u>%s()</u> in file', $method) . $traceString;
+                    $traceString = sprintf('Method {u}{magenta}%s(){/} in file', $method) . $traceString;
                 }
 
                 $this->print($tabs . "\t├─ " . $traceString);

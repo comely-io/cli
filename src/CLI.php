@@ -326,7 +326,7 @@ class CLI
         $this->print($tabs . sprintf("{yellow}File:{/} %s", $t->getFile()));
         $this->print($tabs . sprintf("{yellow}Line:{/} {cyan}%d{/}", $t->getLine()));
         $this->print($tabs . "{yellow}Debug Backtrace:");
-        $this->print($tabs . "\t┬");
+        $this->print($tabs . "┬");
 
         foreach ($t->getTrace() as $trace) {
             $function = $trace["function"] ?? null;

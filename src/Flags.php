@@ -73,7 +73,7 @@ class Flags implements \Iterator, \Countable
      */
     public function set(string $name, ?string $value): self
     {
-        $this->flags[strtolower($name)] = ltrim($value, "-");
+        $this->flags[strtolower(ltrim($name, "-"))] = $value;
         $this->count++;
         return $this;
     }

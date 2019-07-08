@@ -57,19 +57,19 @@ class CLI
         $this->flags = new Flags();
         $this->execStartStamp = microtime(true);
 
-        foreach ($args as $arg) {
+        foreach ($args as $arg) {;
             if (!$arg) {
                 continue;
             }
 
             // Is an argument?
-            if (preg_match('/\w+/', $arg)) {
+            if (preg_match('/^\w+$/', $arg)) {
                 $this->args->append($arg);
                 continue;
             }
 
             // If a flag?
-            if (preg_match('/\-{1,2}\w+(\=[\w\@\.\-]+)?/', $arg)) {
+            if (preg_match('/^\-{1,2}\w+(\=[\w\@\.\-]+)?$/', $arg)) {
                 $arg = explode("=", $arg);
                 $this->flags->set($arg[0], $arg[1] ?? null);
                 continue;
@@ -122,7 +122,7 @@ class CLI
             // Load script
             try {
                 $scriptName = $this->args()->get(0) ?? "console";
-                if (!is_string($scriptName) || !preg_match('/\w+/', $scriptName)) {
+                if (!is_string($scriptName) || !preg_match('/^\w+$/', $scriptName)) {
                     throw new \InvalidArgumentException('Invalid CLI script name');
                 }
 
@@ -233,7 +233,7 @@ class CLI
      */
     final public function repeat(string $char = ".", int $count = 10, int $interval = 100, bool $eol = false): void
     {
-        if ($interval < 0) {
+        if ($interval <= 0) {
             throw new \InvalidArgumentException('Repeat method requires positive interval');
         }
 

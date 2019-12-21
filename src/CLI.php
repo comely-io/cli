@@ -25,9 +25,9 @@ use Comely\Utils\OOP\OOP;
 class CLI
 {
     /** string Version (Major.Minor.Release-Suffix) */
-    public const VERSION = "1.0.21";
+    public const VERSION = "1.0.22";
     /** int Version (Major * 10000 + Minor * 100 + Release) */
-    public const VERSION_ID = 10021;
+    public const VERSION_ID = 10022;
 
     /** @var Directory */
     private $dir;
@@ -85,6 +85,14 @@ class CLI
                 sprintf('Unacceptable passed argument format near "%s..."', substr($arg, 0, 8))
             );
         }
+    }
+
+    /**
+     * @return Buffer
+     */
+    public function buffer(): Buffer
+    {
+        return $this->buffer;
     }
 
     /**

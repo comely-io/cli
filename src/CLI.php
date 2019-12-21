@@ -25,9 +25,9 @@ use Comely\Utils\OOP\OOP;
 class CLI
 {
     /** string Version (Major.Minor.Release-Suffix) */
-    public const VERSION = "1.0.10";
+    public const VERSION = "1.0.21";
     /** int Version (Major * 10000 + Minor * 100 + Release) */
-    public const VERSION_ID = 10010;
+    public const VERSION_ID = 10021;
 
     /** @var Directory */
     private $dir;
@@ -43,6 +43,8 @@ class CLI
     private $execStartStamp;
     /** @var null|string */
     protected $execClassName;
+    /** @var Buffer */
+    private $buffer;
 
     /**
      * CLI constructor.
@@ -58,6 +60,7 @@ class CLI
         $this->args = new Args();
         $this->flags = new Flags();
         $this->execStartStamp = microtime(true);
+        $this->buffer = new Buffer();
 
         foreach ($args as $arg) {
             if (!$arg) {
@@ -71,7 +74,7 @@ class CLI
             }
 
             // If a flag?
-            if (preg_match('/^\-{1,2}\w+(\=[\w\@\.\-]+)?$/', $arg)) {
+            if (preg_match('/^-{1,2}\w+(=[\w@.\-]+)?$/', $arg)) {
                 $arg = explode("=", $arg);
                 $this->flags->set($arg[0], $arg[1] ?? null);
                 continue;
@@ -275,9 +278,12 @@ class CLI
             }
         }
 
+        $this->buffer->appendIfBuffering($line);
+
         if ($eol) {
             print "\e[0m";
             print $this->eolChar;
+            $this->buffer->appendIfBuffering($this->eolChar);
         }
     }
 
@@ -287,6 +293,7 @@ class CLI
      */
     final public function print(string $line, int $sleep = 0): void
     {
+        $this->buffer->appendIfBuffering($line . $this->eolChar);
         print $this->ansiEscapeSeq($line) . $this->eolChar;
         if (!$this->flags->quickExec()) {
             $this->microSleep($sleep);
@@ -299,6 +306,7 @@ class CLI
      */
     final public function inline(string $line, int $sleep = 0): void
     {
+        $this->buffer->appendIfBuffering($line);
         print $this->ansiEscapeSeq($line, false);
         if (!$this->flags->quickExec()) {
             $this->microSleep($sleep);
@@ -364,7 +372,7 @@ class CLI
     private function ansiEscapeSeq(string $prepare, bool $reset = true): string
     {
         $prepared = preg_replace_callback(
-            '/\{([a-z]+|\/)\}/i',
+            '/{([a-z]+|\/)}/i',
             function ($modifier) {
                 switch (strtolower($modifier[1] ?? "")) {
                     // Colors

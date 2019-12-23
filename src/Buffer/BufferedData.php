@@ -12,11 +12,11 @@
 
 declare(strict_types=1);
 
-namespace Comely\DataTypes\Buffer;
+namespace Comely\CLI\Buffer;
 
 /**
  * Class BufferedData
- * @package Comely\DataTypes\Buffer
+ * @package Comely\CLI\Buffer
  */
 class BufferedData
 {

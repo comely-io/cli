@@ -14,8 +14,8 @@ declare(strict_types=1);
 
 namespace Comely\CLI;
 
+use Comely\CLI\Buffer\BufferedData;
 use Comely\CLI\Exception\CLI_BufferException;
-use Comely\DataTypes\Buffer\BufferedData;
 
 /**
  * Class Buffer

@@ -1,4 +1,5 @@
 #!/bin/bash
+
 PHP=`which php`
 BIN=${PWD}/bin/__bin.php
 

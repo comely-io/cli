@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * This file is a part of "comely-io/cli" package.
  * https://github.com/comely-io/cli
  *
@@ -23,18 +23,14 @@ use Comely\Utils\Events\EventsRegister;
  */
 class Events
 {
-    /** @var CLI */
-    private $cli;
     /** @var EventsRegister */
-    private $register;
+    private EventsRegister $register;
 
     /**
      * Events constructor.
-     * @param CLI $cli
      */
-    public function __construct(CLI $cli)
+    public function __construct()
     {
-        $this->cli = $cli;
         $this->register = new EventsRegister();
     }
 

@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * This file is a part of "comely-io/cli" package.
  * https://github.com/comely-io/cli
  *
@@ -25,26 +25,26 @@ use Comely\Utils\OOP\OOP;
 class CLI
 {
     /** string Version (Major.Minor.Release-Suffix) */
-    public const VERSION = "1.0.24";
+    public const VERSION = "2.0.0";
     /** int Version (Major * 10000 + Minor * 100 + Release) */
-    public const VERSION_ID = 10024;
+    public const VERSION_ID = 20000;
 
-    /** @var Directory */
-    private $dir;
     /** @var Events */
-    private $events;
+    private Events $events;
     /** @var string */
-    private $eolChar;
+    private string $eolChar = PHP_EOL;
     /** @var Args */
-    private $args;
+    private Args $args;
     /** @var Flags */
-    private $flags;
+    private Flags $flags;
     /** @var float */
-    private $execStartStamp;
-    /** @var null|string */
-    protected $execClassName;
+    private float $execStartStamp;
     /** @var Buffer */
-    private $buffer;
+    private Buffer $buffer;
+    /** @var null|string */
+    protected ?string $execClassName = null;
+    /** @var string|null */
+    protected ?string $scriptName = null;
 
     /**
      * CLI constructor.
@@ -52,31 +52,53 @@ class CLI
      * @param array $args
      * @throws BadArgumentException
      */
-    public function __construct(Directory $dir, array $args)
+    public function __construct(private Directory $dir, array $args)
     {
-        $this->dir = $dir;
-        $this->events = new Events($this);
-        $this->eolChar = PHP_EOL;
+        $this->events = new Events();
         $this->args = new Args();
         $this->flags = new Flags();
         $this->execStartStamp = microtime(true);
         $this->buffer = new Buffer();
 
+        $aC = -1;
         foreach ($args as $arg) {
             if (!$arg) {
                 continue;
             }
 
-            // Is an argument?
-            if (preg_match('/^\w+$/', $arg)) {
-                $this->args->append($arg);
-                continue;
+            $args++;
+            if ($aC === 0) {
+                if (preg_match('/^\w+$/', $arg)) {
+                    $this->scriptName = $arg;
+                    continue;
+                }
             }
 
-            // If a flag?
-            if (preg_match('/^-{1,2}\w+(=[\w@.\-]+)?$/', $arg)) {
+            // Set if a flag
+            if (preg_match('/^-{1,2}\w$/', $arg)) {
+                switch ($arg) {
+                    case "q":
+                    case "quick":
+                        $this->flags->set(Flags::QUICK);
+                        break;
+                    case "f":
+                    case "force":
+                        $this->flags->set(Flags::FORCE);
+                        break;
+                    case "debug":
+                        $this->flags->set(Flags::DEBUG);
+                        break;
+                    case "v":
+                    case "verbose":
+                        $this->flags->set(Flags::VERBOSE);
+                        break;
+                }
+            }
+
+            // Append to arguments
+            if (preg_match('/^-{0,2}\w+(=[\w@.\-]+)?$/', $arg)) {
                 $arg = explode("=", $arg);
-                $this->flags->set($arg[0], $arg[1] ?? null);
+                $this->args->set(ltrim($arg[0], "-"), $arg[1] ?? null);
                 continue;
             }
 
@@ -99,7 +121,7 @@ class CLI
      * @param string $char
      * @return CLI
      */
-    final public function eol(string $char): self
+    final public function eolChar(string $char): self
     {
         if (!in_array($char, ["\n", "\r\n"])) {
             throw new \InvalidArgumentException('Invalid EOL character');
@@ -137,11 +159,7 @@ class CLI
 
             // Load script
             try {
-                $scriptName = $this->args()->get(0) ?? "console";
-                if (!is_string($scriptName) || !preg_match('/^\w+$/', $scriptName)) {
-                    throw new \InvalidArgumentException('Invalid CLI script name');
-                }
-
+                $scriptName = $this->scriptName ?? "console";
                 $scriptClassname = "bin\\" . OOP::snake_case($scriptName);
                 if (!class_exists($scriptClassname)) {
                     throw new \RuntimeException(sprintf('Script class "%s" does not exist', $scriptClassname));
@@ -252,7 +270,7 @@ class CLI
             throw new \InvalidArgumentException('Repeat method requires positive interval');
         }
 
-        $quickExec = $this->flags->quickExec();
+        $quickExec = $this->flags->isQuick();
         for ($i = 0; $i < $count; $i++) {
             print $char;
             if (!$quickExec) {
@@ -277,7 +295,7 @@ class CLI
             throw new \InvalidArgumentException('Typewrite method requires positive interval');
         }
 
-        $quickExec = $this->flags->quickExec();
+        $quickExec = $this->flags->isQuick();
         $chars = str_split($line);
         foreach ($chars as $char) {
             print $char;
@@ -303,7 +321,7 @@ class CLI
     {
         $this->buffer->appendIfBuffering($line . $this->eolChar);
         print $this->ansiEscapeSeq($line) . $this->eolChar;
-        if (!$this->flags->quickExec()) {
+        if (!$this->flags->isQuick()) {
             $this->microSleep($sleep);
         }
     }
@@ -316,7 +334,7 @@ class CLI
     {
         $this->buffer->appendIfBuffering($line);
         print $this->ansiEscapeSeq($line, false);
-        if (!$this->flags->quickExec()) {
+        if (!$this->flags->isQuick()) {
             $this->microSleep($sleep);
         }
     }
@@ -382,43 +400,21 @@ class CLI
         $prepared = preg_replace_callback(
             '/{([a-z]+|\/)}/i',
             function ($modifier) {
-                switch (strtolower($modifier[1] ?? "")) {
-                    // Colors
-                    case "red":
-                        return "\e[31m";
-                    case "green":
-                        return "\e[32m";
-                    case "yellow":
-                        return "\e[33m";
-                    case "blue":
-                        return "\e[34m";
-                    case "magenta":
-                        return "\e[35m";
-                    case "gray":
-                    case "grey":
-                        return "\e[90m";
-                    case "cyan":
-                        return "\e[36m";
-                    // Formats
-                    case "b":
-                    case "bold":
-                        return "\e[1m";
-                    case "u":
-                    case "underline":
-                        return "\e[4m";
-                    // Special
-                    case "blink":
-                        return "\e[5m";
-                    case "invert":
-                        return "\e[7m";
-                    // Reset
-                    case "reset":
-                    case "/":
-                        return "\e[0m";
-                    // Default
-                    default:
-                        return $modifier[0] ?? "";
-                }
+                return match (strtolower($modifier[1] ?? "")) {
+                    "red" => "\e[31m",
+                    "green" => "\e[32m",
+                    "yellow" => "\e[33m",
+                    "blue" => "\e[34m",
+                    "magenta" => "\e[35m",
+                    "gray", "grey" => "\e[90m",
+                    "cyan" => "\e[36m",
+                    "b", "bold" => "\e[1m",
+                    "u", "underline" => "\e[4m",
+                    "blink" => "\e[5m",
+                    "invert" => "\e[7m",
+                    "reset", "/" => "\e[0m",
+                    default => $modifier[0] ?? "",
+                };
             },
             $prepare
         );

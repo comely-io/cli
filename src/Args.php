@@ -40,7 +40,7 @@ class Args implements \Iterator, \Countable
      */
     public function set(string $name, ?string $value = null): self
     {
-        $this->args[strtolower(ltrim($name, "-"))] = $value;
+        $this->args[strtolower($name)] = $value;
         $this->count++;
         return $this;
     }

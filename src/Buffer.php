@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * This file is a part of "comely-io/cli" package.
  * https://github.com/comely-io/cli
  *
@@ -24,17 +24,9 @@ use Comely\CLI\Exception\CLI_BufferException;
 class Buffer
 {
     /** @var null|BufferedData */
-    private $bufferData;
+    private ?BufferedData $bufferData = null;
     /** @var bool */
-    private $ansiEscapeSeq;
-
-    /**
-     * Buffer constructor.
-     */
-    public function __construct()
-    {
-        $this->ansiEscapeSeq = false;
-    }
+    private bool $ansiEscapeSeq = false;
 
     /**
      * @param bool $keep
@@ -49,7 +41,7 @@ class Buffer
      */
     public function isBuffering(): bool
     {
-        return $this->bufferData ? true : false;
+        return (bool)$this->bufferData;
     }
 
     /**

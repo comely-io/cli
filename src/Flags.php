@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * This file is a part of "comely-io/cli" package.
  * https://github.com/comely-io/cli
  *
@@ -18,129 +18,78 @@ namespace Comely\CLI;
  * Class Flags
  * @package Comely\CLI
  */
-class Flags implements \Iterator, \Countable
+class Flags
 {
-    /** @var array */
-    private $flags;
-    /** @var int */
-    private $count;
-    /** @var int */
-    private $pos;
+    /** @var int Quick execution flag */
+    public const QUICK = 1 << 0;
+    /** @var int Force execution flag */
+    public const FORCE = 1 << 1;
+    /** @var int Debug mode flag */
+    public const DEBUG = 1 << 2;
+    /** @var int Verbose mode flag */
+    public const VERBOSE = 1 << 3;
 
-    /** @var bool */
-    private $_force;
-    /** @var bool */
-    private $_quickExec;
+    /** @var int */
+    private int $flags = 0;
 
     /**
-     * Flags constructor.
+     * @return bool
      */
-    public function __construct()
+    public function isQuick(): bool
     {
-        $this->flags = [];
-        $this->pos = 0;
-        $this->count = 0;
+        return $this->has(self::QUICK);
     }
 
     /**
      * @return bool
      */
-    public function force(): bool
+    public function forceExec(): bool
     {
-        if (!is_bool($this->_force)) {
-            $this->_force = $this->has("force") || $this->has("f");
-        }
-
-        return $this->_force;
+        return $this->has(self::FORCE);
     }
 
     /**
      * @return bool
      */
-    public function quickExec(): bool
+    public function isDebug(): bool
     {
-        if (!is_bool($this->_quickExec)) {
-            $this->_quickExec = $this->has("quick") || $this->has("q");
-        }
-
-        return $this->_quickExec;
+        return $this->has(self::DEBUG);
     }
 
     /**
-     * @param string $name
-     * @param string|null $value
-     * @return Flags
+     * @return bool
      */
-    public function set(string $name, ?string $value): self
+    public function isVerbose(): bool
     {
-        $this->flags[strtolower(ltrim($name, "-"))] = $value;
-        $this->count++;
+        return $this->has(self::VERBOSE);
+    }
+
+    /**
+     * @param int $flag
+     * @return $this
+     */
+    public function set(int $flag): self
+    {
+        $this->flags = $this->flags | $flag;
         return $this;
     }
 
     /**
-     * @return int
-     */
-    public function count(): int
-    {
-        return $this->count;
-    }
-
-    /**
-     * @param string $name
+     * @param int $flag
      * @return bool
      */
-    public function has(string $name): bool
+    public function has(int $flag): bool
     {
-        return array_key_exists(strtolower($name), $this->flags);
+        return (bool)(($this->flags & $flag));
     }
 
     /**
-     * @param string $name
-     * @return string|null
+     * @param int $flag
+     * @return $this
      */
-    public function get(string $name): ?string
+    public function remove(int $flag): self
     {
-        return $this->flags[$name] ?? null;
-    }
-
-    /**
-     * @return void
-     */
-    public function rewind(): void
-    {
-        reset($this->flags);
-    }
-
-    /**
-     * @return string|null
-     */
-    public function current(): ?string
-    {
-        return current($this->flags);
-    }
-
-    /**
-     * @return string
-     */
-    public function key(): string
-    {
-        return key($this->flags);
-    }
-
-    /**
-     * @void
-     */
-    public function next(): void
-    {
-        next($this->flags);
-    }
-
-    /**
-     * @return bool
-     */
-    public function valid(): bool
-    {
-        return key($this->flags) !== null;
+        $this->flags &= ~$flag;
+        return $this;
     }
 }

@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * This file is a part of "comely-io/cli" package.
  * https://github.com/comely-io/cli
  *
@@ -20,16 +20,12 @@ namespace Comely\CLI;
  */
 abstract class Abstract_CLI_Script
 {
-    /** @var CLI */
-    protected $cli;
-
     /**
      * Abstract_CLI_Script constructor.
      * @param CLI $cli
      */
-    public function __construct(CLI $cli)
+    public function __construct(protected CLI $cli)
     {
-        $this->cli = $cli;
     }
 
     abstract public function exec(): void;

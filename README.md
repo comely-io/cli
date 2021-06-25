@@ -4,7 +4,7 @@ CLI component for Comely Apps
 
 ## Requirements
 
-* PHP >= 7.1
+* PHP ^8.0
 
 ## Installation
 

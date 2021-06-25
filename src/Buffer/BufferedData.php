@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * This file is a part of "comely-io/cli" package.
  * https://github.com/comely-io/cli
  *
@@ -21,18 +21,9 @@ namespace Comely\CLI\Buffer;
 class BufferedData
 {
     /** @var string */
-    private $data;
+    private string $data = "";
     /** @var int */
-    private $size;
-
-    /**
-     * BufferedData constructor.
-     */
-    public function __construct()
-    {
-        $this->data = "";
-        $this->size = 0;
-    }
+    private int $size = 0;
 
     /**
      * @param string $data

@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * This file is a part of "comely-io/cli" package.
  * https://github.com/comely-io/cli
  *
@@ -20,20 +20,13 @@ namespace Comely\CLI\ASCII;
  */
 class ASCII_Banner
 {
-    /** @var string */
-    private $name;
-    /** @var array */
-    private $lines;
-
     /**
      * ASCII_Banner constructor.
      * @param string $name
      * @param array $lines
      */
-    public function __construct(string $name, array $lines)
+    public function __construct(private string $name, private array $lines)
     {
-        $this->name = $name;
-        $this->lines = $lines;
     }
 
     /**

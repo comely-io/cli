@@ -1,5 +1,5 @@
 <?php
-/**
+/*
  * This file is a part of "comely-io/cli" package.
  * https://github.com/comely-io/cli
  *
@@ -21,21 +21,9 @@ namespace Comely\CLI;
 class Args implements \Iterator, \Countable
 {
     /** @var array */
-    private $args;
+    private array $args = [];
     /** @var int */
-    private $count;
-    /** @var int */
-    private $pos;
-
-    /**
-     * Args constructor.
-     */
-    public function __construct()
-    {
-        $this->args = [];
-        $this->count = 0;
-        $this->pos = 0;
-    }
+    private int $count = 0;
 
     /**
      * @return int
@@ -46,12 +34,13 @@ class Args implements \Iterator, \Countable
     }
 
     /**
-     * @param string $arg
-     * @return Args
+     * @param string $name
+     * @param string|null $value
+     * @return $this
      */
-    public function append(string $arg): self
+    public function set(string $name, ?string $value = null): self
     {
-        $this->args[] = strtolower($arg);
+        $this->args[strtolower(ltrim($name, "-"))] = $value;
         $this->count++;
         return $this;
     }
@@ -66,12 +55,12 @@ class Args implements \Iterator, \Countable
     }
 
     /**
-     * @param int $num
-     * @return string|null
+     * @param string $name
+     * @return string|bool|null
      */
-    public function get(int $num): ?string
+    public function get(string $name): string|null|bool
     {
-        return $this->args[$num] ?? null;
+        return $this->args[strtolower($name)] ?? false;
     }
 
     /**
@@ -79,31 +68,31 @@ class Args implements \Iterator, \Countable
      */
     public function rewind(): void
     {
-        $this->pos = 0;
+        reset($this->args);
     }
 
     /**
-     * @return void
+     * @return string|null
      */
-    public function next(): void
+    public function current(): ?string
     {
-        ++$this->pos;
-    }
-
-    /**
-     * @return int
-     */
-    public function key(): int
-    {
-        return $this->pos;
+        return current($this->args);
     }
 
     /**
      * @return string
      */
-    public function current(): string
+    public function key(): string
     {
-        return $this->args[$this->pos];
+        return key($this->args);
+    }
+
+    /**
+     * @void
+     */
+    public function next(): void
+    {
+        next($this->args);
     }
 
     /**
@@ -111,6 +100,6 @@ class Args implements \Iterator, \Countable
      */
     public function valid(): bool
     {
-        return isset($this->args[$this->pos]);
+        return key($this->args) !== null;
     }
 }

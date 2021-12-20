@@ -60,7 +60,12 @@ class Args implements \Iterator, \Countable
      */
     public function get(string $name): string|null|bool
     {
-        return $this->args[strtolower($name)] ?? false;
+        $key = strtolower($name);
+        if (array_key_exists($key, $this->args)) {
+            return $this->args[$key];
+        }
+
+        return false;
     }
 
     /**

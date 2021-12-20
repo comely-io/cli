@@ -24,7 +24,7 @@ abstract class Abstract_CLI_Script
      * Abstract_CLI_Script constructor.
      * @param CLI $cli
      */
-    public function __construct(protected CLI $cli)
+    public function __construct(protected readonly CLI $cli)
     {
     }
 
@@ -82,7 +82,7 @@ abstract class Abstract_CLI_Script
      */
     final protected function args(): Args
     {
-        return $this->cli->args();
+        return $this->cli->args;
     }
 
     /**
@@ -90,6 +90,6 @@ abstract class Abstract_CLI_Script
      */
     final protected function flags(): Flags
     {
-        return $this->cli->flags();
+        return $this->cli->flags;
     }
 }

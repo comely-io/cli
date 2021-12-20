@@ -21,7 +21,7 @@ $bin = new \Comely\Filesystem\Directory(__DIR__);
 $cli = new \Comely\CLI\CLI($bin, $args);
 
 // Listen to events, etc...
-$cli->events()->beforeExec();
+$cli->events->beforeExec();
 
 // Execute
 $cli->exec();

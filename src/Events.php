@@ -75,7 +75,7 @@ class Events
 
     /**
      * Callback first argument is instance of CLI obj
-     * Callback second argument will be instance of \Throwable
+     * Callback second argument will be an instance of \Throwable
      * @return Event
      */
     public function scriptExecException(): Event

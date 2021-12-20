@@ -25,26 +25,26 @@ use Comely\Utils\OOP\OOP;
 class CLI
 {
     /** string Version (Major.Minor.Release-Suffix) */
-    public const VERSION = "2.0.0";
+    public const VERSION = "2.0.1";
     /** int Version (Major * 10000 + Minor * 100 + Release) */
-    public const VERSION_ID = 20000;
+    public const VERSION_ID = 20001;
 
     /** @var Events */
-    private Events $events;
-    /** @var string */
-    private string $eolChar = PHP_EOL;
+    public readonly Events $events;
     /** @var Args */
-    private Args $args;
+    public readonly Args $args;
     /** @var Flags */
-    private Flags $flags;
+    public readonly Flags $flags;
     /** @var float */
-    private float $execStartStamp;
+    public readonly float $execStartStamp;
     /** @var Buffer */
-    private Buffer $buffer;
+    public readonly Buffer $buffer;
     /** @var null|string */
     protected ?string $execClassName = null;
     /** @var string|null */
     protected ?string $scriptName = null;
+    /** @var string */
+    private string $eolChar = PHP_EOL;
 
     /**
      * CLI constructor.
@@ -108,15 +108,6 @@ class CLI
             );
         }
     }
-
-    /**
-     * @return Buffer
-     */
-    public function buffer(): Buffer
-    {
-        return $this->buffer;
-    }
-
     /**
      * @param string $char
      * @return CLI
@@ -148,7 +139,6 @@ class CLI
                     $classFilename = OOP::snake_case($className);
                     $classFilepath = $binDirectoryPath . DIRECTORY_SEPARATOR . $classFilename . ".php";
                     if (@is_file($classFilepath)) {
-                        /** @noinspection PhpIncludeInspection */
                         @include_once($classFilepath);
                     }
                 }
@@ -194,7 +184,7 @@ class CLI
 
         // Execution
         $this->print("");
-        if (isset($execSuccess) && $execSuccess) {
+        if ($execSuccess) {
             $this->print("{green}Execution finished!{/}");
         } else {
             $this->print("{red}Execution finished with an exception!{/}");
@@ -232,30 +222,6 @@ class CLI
         $peakMemoryUsage = number_format((memory_get_peak_usage(false) / 1024) / 1024, 2);
         $peakMemoryUsageReal = number_format((memory_get_peak_usage(true) / 1024) / 1024, 2);
         $this->print(sprintf("Peak Memory usage: {grey}%sMB{/} / {grey}%sMB{/}", $peakMemoryUsage, $peakMemoryUsageReal));
-    }
-
-    /**
-     * @return Events
-     */
-    final public function events(): Events
-    {
-        return $this->events;
-    }
-
-    /**
-     * @return Args
-     */
-    final public function args(): Args
-    {
-        return $this->args;
-    }
-
-    /**
-     * @return Flags
-     */
-    final public function flags(): Flags
-    {
-        return $this->flags;
     }
 
     /**

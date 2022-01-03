@@ -285,7 +285,7 @@ class CLI
      */
     final public function eol(): void
     {
-        $this->print($this->eolChar);
+        $this->print("");
     }
 
     /**

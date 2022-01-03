@@ -66,7 +66,7 @@ class CLI
                 continue;
             }
 
-            $args++;
+            $aC++;
             if ($aC === 0) {
                 if (preg_match('/^\w+$/', $arg)) {
                     $this->scriptName = $arg;

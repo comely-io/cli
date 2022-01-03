@@ -95,6 +95,24 @@ abstract class Abstract_CLI_Script
     }
 
     /**
+     * @param string $line
+     * @return string|bool
+     */
+    final protected function requireInput(string $line): string|bool
+    {
+        $this->cli->inline(trim($line) . " ");
+        return $this->waitForInput();
+    }
+
+    /**
+     * @return string|bool
+     */
+    final protected function waitForInput(): string|bool
+    {
+        return trim(fgets(STDIN));
+    }
+
+    /**
      * @return Args
      */
     final protected function args(): Args

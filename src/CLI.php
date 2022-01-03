@@ -25,9 +25,9 @@ use Comely\Utils\OOP\OOP;
 class CLI
 {
     /** string Version (Major.Minor.Release-Suffix) */
-    public const VERSION = "2.0.1";
+    public const VERSION = "2.0.2";
     /** int Version (Major * 10000 + Minor * 100 + Release) */
-    public const VERSION_ID = 20001;
+    public const VERSION_ID = 20002;
 
     /** @var Events */
     public readonly Events $events;

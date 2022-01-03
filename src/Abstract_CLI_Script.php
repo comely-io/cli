@@ -33,19 +33,32 @@ abstract class Abstract_CLI_Script
     /**
      * @param string $line
      * @param int $sleep
+     * @return $this
      */
-    final protected function print(string $line, int $sleep = 0): void
+    final protected function print(string $line, int $sleep = 0): static
     {
         $this->cli->print($line, $sleep);
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    final protected function eol(): static
+    {
+        $this->cli->eol();
+        return $this;
     }
 
     /**
      * @param string $line
      * @param int $sleep
+     * @return $this
      */
-    final protected function inline(string $line, int $sleep = 0): void
+    final protected function inline(string $line, int $sleep = 0): static
     {
         $this->cli->inline($line, $sleep);
+        return $this;
     }
 
     /**
@@ -60,10 +73,12 @@ abstract class Abstract_CLI_Script
      * @param string $line
      * @param int $interval
      * @param bool $eol
+     * @return $this
      */
-    final protected function typewrite(string $line, int $interval = 100, bool $eol = false): void
+    final protected function typewrite(string $line, int $interval = 100, bool $eol = false): static
     {
         $this->cli->typewrite($line, $interval, $eol);
+        return $this;
     }
 
     /**
@@ -71,10 +86,12 @@ abstract class Abstract_CLI_Script
      * @param int $count
      * @param int $interval
      * @param bool $eol
+     * @return $this
      */
-    final protected function repeat(string $char = ".", int $count = 10, int $interval = 100, bool $eol = false): void
+    final protected function repeat(string $char = ".", int $count = 10, int $interval = 100, bool $eol = false): static
     {
         $this->cli->repeat($char, $count, $interval, $eol);
+        return $this;
     }
 
     /**

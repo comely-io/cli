@@ -108,6 +108,7 @@ class CLI
             );
         }
     }
+
     /**
      * @param string $char
      * @return CLI
@@ -277,6 +278,14 @@ class CLI
             print $this->eolChar;
             $this->buffer->appendIfBuffering($this->eolChar);
         }
+    }
+
+    /**
+     * @return void
+     */
+    final public function eol(): void
+    {
+        $this->print($this->eolChar);
     }
 
     /**

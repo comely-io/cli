@@ -25,13 +25,12 @@ class console extends Abstract_CLI_Script
 {
     public function exec(): void
     {
-        $this->repeat("~", 5, 0);
+        $this->repeat("~", 5)->print("");
         foreach (Banners::Digital("COMELY CLI")->lines() as $line) {
             $this->print("{magenta}{invert}" . $line . "{/}");
         }
 
-        $this->repeat("~", 5, 0);
-        $this->print("");
+        $this->repeat("~", 5)->eol()->print("");
         $this->typewrite("This is a sample script that runs in CLI", 100, true);
     }
 }
